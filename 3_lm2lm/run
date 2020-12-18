@@ -63,91 +63,92 @@ fi
 # setup namelists
 cat > INPUT <<EOF
   &CONTRL
-    lmixcld=.false.,
-    yinput_model = 'COSMO'
-    hincbound=1.0,
-    hstart=${LM_NL_HSTART},
-    hstop=${LM_NL_HSTOP},
-    linitial = .TRUE.,
-    idbg_level=3,
-    luse_t_skin=.TRUE.,
-    nincwait=30,
-    nmaxwait=60,
-    lboundaries=.true.,
-    lprog_qi=.true.,
-    lprog_qr_qs=.true.,
-    lprog_rho_snow=.false.,
-    lmulti_layer_in=.true.,
-    lmulti_layer_lm=.true.,
-    itype_w_so_rel=1,
-    lforest=.TRUE., lsso=.TRUE.,
-    lvertwind_ini=.true.,
-    lvertwind_bd=.false.,
-    llbc_smooth=.true.,
+  hincbound=1.0,
+  hstart=${LM_NL_HSTART},
+  hstop=${LM_NL_HSTOP},
+  nprocx=${NPX}, nprocy=${NPY}, nprocio=${NPIO},
+  ydate_ini='${LM_YYYY_INI}${LM_MM_INI}${LM_DD_INI}${LM_ZZ_INI}0000',
+  ydate_bd ='${LM_YYYY_INI}${LM_MM_INI}${LM_DD_INI}${LM_ZZ_INI}0000',
+  lmixcld=.false.,
+  yinput_model = 'COSMO'
+  linitial = .TRUE.,
+  idbg_level=3,
+  luse_t_skin=.TRUE.,
+  nincwait=30,
+  nmaxwait=300,
+  lboundaries=.true.,
+  lprog_qi=.true.,
+  lprog_qr_qs=.true.,
+  lprog_rho_snow=.false.,
+  lmulti_layer_in=.true.,
+  lmulti_layer_lm=.true.,
+  itype_w_so_rel=1,
+  lforest=.TRUE., lsso=.TRUE.,
+  lvertwind_ini=.true.,
+  lvertwind_bd=.false.,
+  llbc_smooth=.true.,
     lfilter_pp=.true.,
-    lfilter_oro=.false.,
-      ilow_pass_oro=4,
-        numfilt_oro=1,
-        ilow_pass_xso=5,
-          lxso_first=.FALSE.,
-          numfilt_xso=1,
-          rxso_mask=750.0,
-      eps_filter=0.1,
-        norder_filter=5,
-      l_topo_z=.false.,
-    l_s_oro=.TRUE.,
-    rfill_valley=0.0,
-      ifill_valley=7,
-    ltime_mean=.true.,
-    lreorder=.false.,
-    lasync_io=.TRUE.,
-    lbdclim=.TRUE.,
-    nprocx=${NPX}, nprocy=${NPY}, nprocio=${NPIO},
-    ydate_ini='${LM_YYYY_INI}${LM_MM_INI}${LM_DD_INI}${LM_ZZ_INI}0000',
-    ydate_bd ='${LM_YYYY_INI}${LM_MM_INI}${LM_DD_INI}${LM_ZZ_INI}0000',
-    itype_aerosol = 2,
-    itype_albedo = 2,
-  /
+  lfilter_oro=.FALSE.,
+    ilow_pass_oro=4,
+      numfilt_oro=1,
+      ilow_pass_xso=5,
+        lxso_first=.FALSE.,
+        numfilt_xso=1,
+        rxso_mask=750.0,
+    eps_filter=0.1,
+      norder_filter=5,
+    l_topo_z=.false.,
+  l_s_oro=.TRUE.,
+  rfill_valley=0.0,
+    ifill_valley=7,
+  ltime_mean=.true.,
+  lreorder=.false.,
+  lasync_io=.FALSE.,
+  lbdclim=.TRUE.,
+  itype_aerosol = 2,
+  itype_albedo = 2,  
+  /END
  &GRID_IN
   pcontrol_fi = 30000.,
-  ie_in_tot = 361, je_in_tot = 361, ke_in_tot = 60,
-  startlat_in_tot  = -19.36, startlon_in_tot  = -23.33,
-  pollat_in = 43.0, pollon_in = -170.0,
+  ie_in_tot = 551, je_in_tot = 361, ke_in_tot = 60,
+  startlat_in_tot  = -12.26, startlon_in_tot  = -70.115,
+  pollat_in = 90.0, pollon_in = -180.0,
   dlat_in = 0.11, dlon_in = 0.11,
+  endlon_in_tot=13.86, endlat_in_tot=15.51,
   ke_soil_in=9,
   czml_soil_in=0.005, 0.025, 0.07, 0.16, 0.34, 0.70, 1.47, 2.86, 5.74, 11.50,
- /
+ /END
  &LMGRID
-  ielm_tot=801, jelm_tot=801, kelm_tot=60,
+  ielm_tot=2310, jelm_tot=1542, kelm_tot=60,
   ivctype=2, vcflat = 11357.0,
   ke_soil_lm=9, irefatm=2,
   czml_soil_lm=0.005, 0.025, 0.07, 0.16, 0.34, 0.70, 1.47, 2.86, 5.74,  11.50,
-  vcoord_d=23588.50,22395.93,21304.04,   20307.39,   19399.95,
-     18574.03,   17821.88,   17135.64,   16507.79,   15930.60,
-     15396.52,   14897.86,   14427.98,   13981.10,   13551.52,
-     13133.53,   12721.37,   12312.04,   11900.03,   11485.37,
-     11068.19,   10648.54,   10226.48,    9802.09,    9375.43,
-      8946.58,    8515.59,    8082.55,    7647.52,    7210.55,
-      6771.96,    6332.38,    5896.41,    5468.04,    5050.84,
+  vcoord_d=29798.50,28255.93,26824.04,   25497.39,   24269.35,
+     23134.03,   22081.88,   21105.64,   20207.79,   19360.60,
+     18576.52,   17827.86,   17127.98,   16451.10,   15811.52,
+     15183.53,   14581.37,   13982.04,   13400.03,   12815.37,
+     12248.19,   11678.54,   11126.48,   10572.09,   10035.43,
+      9496.58,    8975.59,    8452.55,    7947.52,    7440.55,
+      6931.96,    6442.38,    5956.41,    5498.04,    5050.84,
       4647.96,    4261.91,    3893.26,    3542.15,    3208.52,
       2892.23,    2593.71,    2312.95,    2049.75,    1803.89,
       1575.57,    1364.68,    1170.90,     993.84,     833.44,
        689.53,     561.52,     448.82,     350.95,     267.55,
        197.67,     137.23,      87.33,      48.44,      20.00,       0.00,
-  pollat = 43.0 , pollon = -170.0,
+  pollat = 90.0 , pollon = -180.0,
   dlon=0.02, dlat=0.02,
-  startlat_tot  = -9.30,
-  startlon_tot  = -9.30,
- /
+  startlat_tot  = -7.77,
+  startlon_tot  = -65.625,
+ /END
  &DATABASE
- /
+ /END
  &DATA
   ylmext_form_read='ncdf',
   yinext_form_read='ncdf',
   yin_form_read='ncdf',
   ylm_form_write='ncdf',
-  ie_ext=2313, je_ext=2313,
-  ylmext_lfn='./input/extpar_2km_europe_2313x2313.nc',
+  ie_ext=2990, je_ext=1900,
+  ylmext_lfn='./input/extpar_atlantic_2km.nc',
   ylmext_cat='./',
   yinext_lfn='lffd${LM_YYYY_INI}${LM_MM_INI}${LM_DD_INI}${LM_ZZ_INI}0000c.nc',
   yinext_cat='./input/',
@@ -157,12 +158,12 @@ cat > INPUT <<EOF
   yinput_type='forecast',
   ytunit_in='d',
   ytunit_out='d',
- /
+ /END
  &PRICTR
   igp_tot = 36, 40, 48, 44, 48, 85, 77,
   jgp_tot = 30, 94, 38, 26, 26, 96, 12,
   lchkin=.TRUE., lchkout=.TRUE.,lprgp=.FALSE.,
- /
+ /END
 EOF
 
 # setup job
@@ -172,7 +173,7 @@ cat > job <<EOF_job_SLURM
 #SBATCH --output=job.out
 #SBATCH --ntasks=${NTASKS}
 #SBATCH --partition=${QUEUE}
-#SBATCH --time=07:00:00
+#SBATCH --time=10:30:00
 #SBATCH --account=${ACCOUNT}
 EOF_job_SLURM
 

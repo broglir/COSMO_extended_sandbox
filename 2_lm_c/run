@@ -7,7 +7,7 @@
 [ -z "${EXE_LMC}"  ] && EXE=lm_f90        || EXE=${EXE_LMC}
 [ -z "$1"          ] && SCHEDULER="SLURM" || SCHEDULER="$1"
 [ -z "$2"          ] && QUEUE="normal"   || QUEUE="$2"
-[ -z "$3"          ] && ACCOUNT="ch4"     || ACCOUNT="$3"
+[ -z "$3"          ] && ACCOUNT="pr94"     || ACCOUNT="$3"
 [ -z "$4"          ] && WAITFORJOB=""     || WAITFORJOB="$4"
 
 if [ -z "$CORES_PER_NODE" ] ; then
@@ -65,20 +65,20 @@ cat > INPUT_DIA <<EOF_DIA
 EOF_DIA
 cat > INPUT_DYN <<EOF_DYN
  &DYNCTL
+    lcpp_dycore=.TRUE.,
     lspubc=.true.,
     itype_spubc=3,
-      rdheight=13500.0,
+      rdheight=15500.0, !13500.0
       nrdtau=10,
-    lcpp_dycore=.TRUE.,
     lexpl_lbc=.true.,
-      rlwidth=170000.0,
+      rlwidth=85000.0,
     ldyn_bbc=.false.,
     itype_bbc_w=114,
     betasw=0.4,
     xkd=0.1,
     epsass=0.15,
     lcond=.true.,
-    l_diff_Smag = .TRUE.,
+    l_diff_smag = .TRUE.,
     lhordiff=.true.,
       itype_hdiff=2,
       hd_corr_u_bd=0.75,
@@ -96,14 +96,16 @@ cat > INPUT_DYN <<EOF_DYN
         iadv_order=5,
         itheta_adv=0,
         ltadv_limiter=.false.,
-      itype_fast_waves=2, 
       y_scalar_advect = 'BOTT2_STRANG',
       y_vert_adv_dyn='impl2',
         ieva_order=3,
+    ldiabf_lh=.true.,
+    itype_fast_waves=2,
     itype_outflow_qrsg=2,
     itype_lbc_qrsg=1,
  /END
 EOF_DYN
+
 cat > INPUT_INI <<EOF_INI
  &INICTL
   ndfi=2,
@@ -111,20 +113,40 @@ cat > INPUT_INI <<EOF_INI
   dtbak=40.0, dtfwd=40.0,
  /END
 EOF_INI
+
+cat > INPUT_SAT << EONL
+ &SATCTL
+   num_sensors=1,
+   sat_input_01='MSG',1,'SEVIRI',8, .TRUE., .TRUE.,.TRUE., .TRUE.,
+   nchan_input_01=1,2,3,4,5,6,7,8,
+   lcon_clw=.TRUE.,
+ /END
+EONL
+
 #output only fields that require no post-processing
 cat > INPUT_IO <<EOF_IO
- &IOCTL
-  yform_read='ncdf',
-  ngribout = 9,
-  nhour_restart=${LM_NL_HSTOP},${LM_NL_HSTOP},1
-  ytunit_restart = 'd',
-  ydir_restart_in='./output/restarts'
-  ydir_restart_out='./output/restarts'
+&IOCTL
   ldwd_grib_use=.false.,
+  yform_read='ncdf',
   l_ke_in_gds=.TRUE.,
   lasync_io=.FALSE.,
+  ymode_read = 'r  ',
+  ymode_write = 'w b',
+  nincwait=30,
+  nmaxwait=180,
+  nhour_restart=${LM_NL_HSTOP},${LM_NL_HSTOP},1
+  ngribout=11,
   itype_gather=2,
-  lbdclim = .TRUE.,
+  ydir_restart_in='./output/restarts'
+  ydir_restart_out='./output/restarts'
+  ytunit_restart='d',
+  lbdclim=.TRUE.,
+  yncglob_title = "CLM driven by ERAINT",
+  yncglob_source = "cosmo_5.X_pompa",
+  yncglob_experiment_id ="Evaluation_atlantic",
+  ncglob_realization = 1,
+ /END
+ &DATABASE
  /END
  &GRIBIN
   lbdana=.FALSE.,
@@ -134,7 +156,7 @@ cat > INPUT_IO <<EOF_IO
   ydirbd='./bc/',
   lchkbd =.TRUE.,
   lana_qi = .FALSE.,
-  llb_qi  = .True.,
+  llb_qi  = .TRUE.,
   lana_qg = .FALSE.,
   llb_qg  = .FALSE.,
   lana_qr_qs = .FALSE.,
@@ -145,153 +167,204 @@ cat > INPUT_IO <<EOF_IO
   lan_t_snow = .TRUE., lan_w_snow = .TRUE., lan_w_i = .TRUE., lan_rho_snow = .TRUE.,
   lan_t_s = .FALSE.,
   ytunitbd='d',
- /END
+  /END
  &GRIBOUT
   yform_write='ncdf',
-  hcomb=$LM_NL_HSTART,$LM_NL_HSTOP,1,
-  yvarml='CLCT','CLCH','CLCM','CLCL','ASHFL_S','ALHFL_S','ASOB_S','ASOB_T','ATHB_T','ALWU_S','ASWDIFU_S','ALB_RAD','ATHB_S','ASWD_S','LWU_S','AEVAP_S'
+  hcomb=$LM_NL_HSTART,$LM_NL_HSTOP ,1,
+  yvarml='U','V','W','T','PP',
+     'QV','QC', 'QS','QR','QI','QG',
+     'VIO3','HMO3',
+     'T_SNOW','QV_S','W_SNOW','W_I','T_S',
+     'T_SO','W_SO','RHO_SNOW','FRESHSNW',
   yvarpl=' ',
   yvarzl=' ',
   lcheck=.TRUE.,
   luvmasspoint=.FALSE.,
-  lwrite_const=.TRUE.,
-  ydir='./output/1h_second',
-  l_z_filter=.FALSE.,l_p_filter=.FALSE.,
-  l_fi_pmsl_smooth =.FALSE.,
-  ytunit='d',
- /END 
- &GRIBOUT
-   yform_write='ncdf',
-   ncomb=${N_START},${N_STOP},${STEP_6M},
-   yvarml='TOT_PREC',
-   lcheck=.FALSE.,
-   luvmasspoint=.FALSE.,
-   lwrite_const=.False.,
-   ydir='./output/6min_precip',
-   ytunit='d',
-  /END
-  &GRIBOUT
-  yform_write='ncdf',
-  hcomb=${LM_NL_HSTART},${LM_NL_HSTOP},1,
-  yvarml=' ',
-  yvarpl=' ',
-  yvarzl='U','V',
-  zlev=100,
-  lzint_above_ground=.TRUE.,
-  lcheck=.FALSE.,
-  luvmasspoint=.FALSE.,
-  lwrite_const=.False.,
-  ydir='./output/1h_100m',
+  lwrite_const=.True.,
+  ydir='./output',
+  l_z_filter=.FALSE., l_p_filter=.FALSE.,
+  l_fi_pmsl_smooth = .FALSE.,
   ytunit='d',
  /END
-&GRIBOUT
+ &GRIBOUT
   yform_write='ncdf',
-  hcomb=${LM_NL_HSTART},${LM_NL_HSTOP},1,
-  yvarml= 'VMAX_10M','QV_2M','QCVG_CON','TOT_PR','TOT_SNOW','U_10M', 'V_10M', 'T_2M', 'T_G', 'RELHUM_2M', 'PS', 'TQC','TQI','TQV','CAPE_ML','CIN_ML','HPBL','RUNOFF_S', 'RUNOFF_G'
+  hcomb=$LM_NL_HSTART,$LM_NL_HSTOP,1,
+  yvarml='CLCT','CLCH','CLCM','CLCL','ASHFL_S','ALHFL_S','ASOB_S','ASOB_T','ATHB_T','ATHB_S',
+  yvarpl=' ',
+  yvarzl=' ',
+  lcheck=.TRUE.,
+  luvmasspoint=.FALSE.,
+  lwrite_const=.False.,
+  ydir='./output/1h_second',
+  l_z_filter=.FALSE.,l_p_filter=.FALSE.,
+  l_fi_pmsl_smooth = .FALSE.,
+  ytunit='d',
+ /END
+ &GRIBOUT
+  yform_write='ncdf',
+  hcomb=$LM_NL_HSTART,$LM_NL_HSTOP,1,
+  yvarml='U_10M', 'V_10M', 'T_2M', 'QV_2M', 'RELHUM_2M', 'T_G', 'PS', 'TOT_PREC','RAIN_GSP', 'RAIN_CON', 'CAPE_ML', 'CIN_ML','HPBL',
   yvarpl=' ',
   yvarzl=' ',
   lcheck=.TRUE.,
   luvmasspoint=.FALSE.,
   lwrite_const=.FALSE.,
   ydir='./output/1h',
+  l_z_filter=.FALSE.,l_p_filter=.FALSE.,
+  l_fi_pmsl_smooth = .FALSE.,
   ytunit='d',
  /END
  &GRIBOUT
   yform_write='ncdf',
-  hcomb=${LM_NL_HSTART},${LM_NL_HSTOP},1,
-  yvarml='U','V','W','T','QV','QC',
-         'PP',
-         'QS','QR','QI','QG',
-         'VIO3','HMO3','RELHUM',
-         'T_SNOW','QV_S','W_SNOW','W_I','T_S',
-         'T_SO','W_SO','RHO_SNOW','FRESHSNW',
+  hcomb=$LM_NL_HSTART,$LM_NL_HSTOP,1,
+  yvarml='ASWD_S','ASWDIR_S', 'ASWDIFD_S','ALB_RAD','ALWU_S','ASWDIFU_S',
   yvarpl=' ',
   yvarzl=' ',
-  lcheck=.FALSE.,
+  lcheck=.TRUE.,
   luvmasspoint=.FALSE.,
-  lwrite_const=.TRUE.,
-  ydir='./output',
+  lwrite_const=.FALSE.,
+  ydir='./output/1h_rad',
+  l_z_filter=.FALSE.,l_p_filter=.FALSE.,
+  l_fi_pmsl_smooth = .FALSE.,
   ytunit='d',
  /END
  &GRIBOUT
   yform_write='ncdf',
-  hcomb=${LM_NL_HSTART},${LM_NL_HSTOP},3,
-  yvarml='PMSL', 'TQV', 'TWATER', 'TWATFLXU', 'TWATFLXV'
+  hcomb=$LM_NL_HSTART,$LM_NL_HSTOP,1,
+  yvarml='ASOBC_S', 'ASOBC_T', 'ATHBC_S', 'ATHBC_T',
+  yvarpl=' ',
+  yvarzl=' ',
+  lcheck=.TRUE.,
+  luvmasspoint=.FALSE.,
+  lwrite_const=.FALSE.,
+  ydir='./output/1h_clearsky',
+  l_z_filter=.FALSE.,l_p_filter=.FALSE.,
+  l_fi_pmsl_smooth = .FALSE.,
+  ytunit='d',
+ /END
+ &GRIBOUT
+  yform_write='ncdf',
+  hcomb=$LM_NL_HSTART,$LM_NL_HSTOP,1,
+  yvarml='TQV', 'TQC', 'TQI', 'TQR', 'TQS', 'TQG',
+  yvarpl=' ',
+  yvarzl=' ',
+  lcheck=.TRUE.,
+  luvmasspoint=.FALSE.,
+  lwrite_const=.FALSE.,
+  ydir='./output/1h_vertint',
+  l_z_filter=.FALSE.,l_p_filter=.FALSE.,
+  l_fi_pmsl_smooth = .FALSE.,
+  ytunit='d',
+ /END
+ &GRIBOUT
+  yform_write='ncdf',
+  hcomb=$LM_NL_HSTART,$LM_NL_HSTOP,3,
+  yvarml='PMSL', 'TWATER', 'TWATFLXU', 'TWATFLXV','OMEGA',
   yvarpl=' ',
   yvarzl=' ',
   lcheck=.TRUE.,
   luvmasspoint=.FALSE.,
   lwrite_const=.FALSE.,
   ydir='./output/3h',
+  l_z_filter=.FALSE.,l_p_filter=.FALSE.,
+  l_fi_pmsl_smooth = .FALSE.,
   ytunit='d',
  /END
  &GRIBOUT
- yform_write='ncdf',
-  hcomb=$LM_NL_HSTART,$LM_NL_HSTOP,3,
-  yvarml='',
-  yvarpl='U','V','W','QV','T',
-  plev=200,500,700,850,925,1000,
+  yform_write='ncdf',
+  hcomb=$LM_NL_HSTART,$LM_NL_HSTOP,6,
+!  yvarml='U', 'V', 'W',
+  yvarml=' ',
+  yvarpl='T','FI','RELHUM','U','V','W',
+  plev = 200,500,700,850,
   yvarzl=' ',
   lcheck=.TRUE.,
   luvmasspoint=.FALSE.,
   lwrite_const=.FALSE.,
-  ydir='./output/3h_CORDEX',
+  ydir='./output/6h',
+  l_fi_pmsl_smooth = .FALSE.,
+  ytunit='d',
+ /END
+ &GRIBOUT
+  yform_write='ncdf',
+  hcomb=$LM_NL_HSTART,$LM_NL_HSTOP,6,
+  yvarml='QV','QC','QI','T','P',
+  yvarpl=' ',
+  yvarzl=' ',
+  lcheck=.TRUE.,
+  luvmasspoint=.FALSE.,
+  lwrite_const=.FALSE.,
+  ydir='./output/6h_3D',
   l_z_filter=.FALSE.,l_p_filter=.FALSE.,
   l_fi_pmsl_smooth =.FALSE.,
   ytunit='d',
  /END
  &GRIBOUT
   yform_write='ncdf',
-  hcomb=${LM_NL_HSTART},${LM_NL_HSTOP},6,
-  yvarml='PMSL','PS',
-  yvarpl='T','FI','RELHUM','U','V','W',
-  plev = 200,500,700,850,925,1000,
-  yvarzl=' ',
-  lcheck=.TRUE.,
-  luvmasspoint=.FALSE.,
-  lwrite_const=.FALSE.,
-  ydir='./output/6h',
-  ytunit='d',
- /END
- &GRIBOUT
-  yform_write='ncdf',
-  hcomb=${LM_NL_HSTART},${LM_NL_HSTOP},24,
-  yvarml= 'VABSMX_10M','T_SO','H_SNOW','W_SO', 'W_SNOW', 'TMIN_2M', 'TMAX_2M', 
+  hcomb=$LM_NL_HSTART,$LM_NL_HSTOP,6,
+  yvarml='QR','QS','CLC','U','V','W',
   yvarpl=' ',
   yvarzl=' ',
   lcheck=.TRUE.,
   luvmasspoint=.FALSE.,
-  lwrite_const=.TRUE.,
+  lwrite_const=.FALSE.,
+  ydir='./output/6h_3D_second',
+  l_z_filter=.FALSE.,l_p_filter=.FALSE.,
+  l_fi_pmsl_smooth =.FALSE.,
+  ytunit='d',
+ /END
+ &GRIBOUT
+  yform_write='ncdf',
+  hcomb=$LM_NL_HSTART,$LM_NL_HSTOP,24,
+  yvarml='UMAX_10M','VMAX_10M', 'T_SO', 'W_SO', 'TMIN_2M', 'TMAX_2M', 'RUNOFF_S', 'RUNOFF_G',
+  yvarpl=' ',
+  yvarzl=' ',
+  lcheck=.TRUE.,
+  luvmasspoint=.FALSE.,
+  lwrite_const=.FALSE.,
   ydir='./output/24h',
+  l_z_filter=.FALSE.,l_p_filter=.FALSE.,
+  l_fi_pmsl_smooth = .FALSE.,
   ytunit='d',
  /END
 EOF_IO
+
+
 cat > INPUT_ORG <<EOF_ORG
  &LMGRID
-  startlat_tot  = -19.36,
-  startlon_tot  = -23.33,
-  pollat=43.0, pollon=-170.0,
+  startlat_tot  = -12.26,
+  startlon_tot  = -70.115,
+  pollat=90.0, pollon=-180.0,
   dlon=0.11, dlat=0.11,
-  ie_tot= 361, je_tot= 361, ke_tot=60,
+  ie_tot= 551, je_tot= 361, ke_tot=60,
  /END
  &RUNCTL
   dt=${DT},
   hstart=${LM_NL_HSTART},   hstop=${LM_NL_HSTOP},
   ydate_ini='${LM_YYYY_INI}${LM_MM_INI}${LM_DD_INI}${LM_ZZ_INI}0000',
   hincmxt=24.0,
-  hincmxu=1.0,
+  hincmxu=24.0,
   itype_timing=4,
   lreproduce=.TRUE.,
-  luseobs =.false.,
+  luseobs =.FALSE.,
   lphys   =.TRUE.,
   ldiagnos=.FALSE.,
   ldfi=.FALSE.,
-  nprocx=${NPX}, nprocy=${NPY}, nprocio=${NPIO},
+  nprocx=${NPX}, nprocy=${NPY}, nprocio=0,
+  num_asynio_comm=${NPIO},
+  num_iope_percomm=0,
   nboundlines=3,
   ldump_ascii = .FALSE.,
-  idbg_level = 200,
-  ncomm_type = 1,
+  luse_rttov = .FALSE.,
+  idbg_level = 10,
+  ldebug_dyn = .TRUE.,
+  ldebug_rad = .FALSE.,
+  ldebug_tur = .FALSE.,
+  ldebug_con = .TRUE.,
+  ldebug_io = .TRUE.,
+  ldebug_ass = .FALSE.,
   l_t_check = .FALSE.,
+  nproma=-1,
  /END
  &TUNING
    tkhmin = 0.4,
@@ -312,28 +385,27 @@ cat > INPUT_ORG <<EOF_ORG
    z0m_dia=0.2,
    crsmin=150.0,
    clc_diag=0.5,
-   tur_len=500.0,
    qc0=0.0
    uc1 = 0.0626,
    radfac = 0.5,
    fac_rootdp2 = 1.0,
-   soilhyd = 1.62 ,
+   soilhyd = 1.62,
+   tur_len = 500.0,
  /END
+EONL
 EOF_ORG
+
+
 cat > INPUT_PHY <<EOF_PHY
  &PHYCTL
-  lseaice =.false.
-  llake=.false.
-  lgsp    =.true.,
+  lgsp=.TRUE.,
       itype_gscp=4,
-      ldiniprec=.FALSE., 
-  lrad    =.true.,
-      hincrad = 1.0,
-      lradtopo=.False.,
+      ldiniprec=.FALSE.,
+  lrad=.TRUE.,
+      hincrad = 1.,
   lforest=.TRUE.,
-  ltur    =.true.,
+  ltur=.TRUE.,
       ninctura=1,
-      lexpcor=.false.,
       ltmpcor=.false.,
       lprfcor=.false.,
       lnonloc=.false.,
@@ -342,7 +414,7 @@ cat > INPUT_PHY <<EOF_PHY
       imode_turb=1,
       itype_tran=2,
       imode_tran=1,
-      limpltkediff=.True.,
+      limpltkediff=.TRUE.,
     itype_wcld=2,
       icldm_rad=4,
       icldm_turb=2,
@@ -352,36 +424,37 @@ cat > INPUT_PHY <<EOF_PHY
       lmelt=.TRUE.,
       lmelt_var=.TRUE.,
       lmulti_layer=.TRUE.,
-      itype_trvg=2,
-      ke_soil=9,
-      czml_soil=0.005, 0.025, 0.07, 0.16, 0.34, 0.70, 1.47, 2.86, 5.74,  11.50,
-      czbot_w_so=8.0,
       itype_root = 2
       itype_heatcond=2
       itype_evsl=4,
+      itype_trvg=2,
       itype_hydmod=1,
       itype_hydcond=1,
-      lsoil_init_fill=.FALSE.,  ! Saturate low soil levels; Use only in first month of simualtion
-    lconv=.true.,
-      itype_conv=0,
+      ke_soil=9,
+      czml_soil=0.005, 0.025, 0.07, 0.16, 0.34, 0.70, 1.47, 2.86, 5.74,  11.50,
+      czbot_w_so=8.0,
+      lsoil_init_fill=.FALSE.,  !!!!!!!!!!!!!! Saturate low soil levels; Use only in first month of simualt
+    lconv=.FALSE.,  !.TRUE.,
+      itype_conv=3, !0,
       nincconv=5,
     lcape=.false.,
       lconf_avg=.true.,
-    lsso=.TRUE.,
-      ltkesso=.False.,
-    itype_albedo = 2,
+        lradtopo=.false.,
+    lsso=.true.,
+    lseaice=.false.,
     itype_aerosol = 2,
+    itype_albedo = 2,
  /END
 EOF_PHY
 
 cat > job <<EOF_job_SLURM
 #!/bin/bash
-#SBATCH --job-name=lm_c_GA
+#SBATCH --job-name=lm_c_atl
 #SBATCH --output=job.out
 #SBATCH --nodes=${NNODES}
 #SBATCH --ntasks-per-node=${TASKS_PER_NODE}
 #SBATCH --partition=${QUEUE}
-#SBATCH --time=00:30:00
+#SBATCH --time=04:30:00
 #SBATCH --account=${ACCOUNT}
 EOF_job_SLURM
 if [[ $HOST == daint* ]]; then
@@ -399,7 +472,7 @@ cat >> job <<EOF_job
 
 # Initialization
 set verbose
-set echo
+st echo
 #module load daint-gpu
 # set environmental parameters
 setenv OMP_NUM_THREADS 1

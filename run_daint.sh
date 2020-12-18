@@ -33,13 +33,13 @@ export GPUS_PER_NODE=1
 export CONDA_ENVS_PATH=/scratch/snx3000/npiaget/virtualenvs/
 
 # setup configurations
-export NPX_IFS2LM=3
+export NPX_IFS2LM=2
 export NPY_IFS2LM=6
 export NPIO_IFS2LM=0
 export EXE_IFS2LM="./int2lm"
 
-export NPX_LMC=2
-export NPY_LMC=2
+export NPX_LMC=6
+export NPY_LMC=4
 export NPIO_LMC=0
 export EXE_LMC="./lm_f90"
 
@@ -48,24 +48,24 @@ export NPY_LM2LM=10
 export NPIO_LM2LM=0
 export EXE_LM2LM="./int2lm"
 
-export NPX_LMF=5
-export NPY_LMF=5
-export NPIO_LMF=4
+export NPX_LMF=12
+export NPY_LMF=12
+export NPIO_LMF=6
 export EXE_LMF="./lm_f90"
 
 # Configure Simulation
-export LM_YYYY_INI=1993
+export LM_YYYY_INI=2004
 export LM_MM_INI=11
 export LM_DD_INI=01
 export LM_ZZ_INI=00
 
-export LM_YYYY_BEGIN=1993
+export LM_YYYY_BEGIN=2004
 export LM_MM_BEGIN=11
 export LM_DD_INI=01
 export LM_ZZ_BEGIN=${LM_ZZ_INI}
 
 export LM_NL_HSTART=0
-export LM_NL_HSTOP=24
+export LM_NL_HSTOP=720
 
 export FRONTS_TS_START=2006060100
 export FRONTS_TS_END=2006060200

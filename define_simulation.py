@@ -20,8 +20,8 @@ import calendar
 name_run='testing_sandbox'
 
 postprocessing=True
-store_system='/store/c2sm/pr04/jvergara/RUNS_IN_SCRATCH/'
-saving_folder=store_system+name_run+'/'
+store_system='/project/pr94/robro/cosmo_out'
+saving_folder=store_system+'/'+name_run+'/'
 scratch_folder= os.environ['SCRATCH']+'/'+name_run
 
 #set name run in run_daint
@@ -37,15 +37,15 @@ os.makedirs(scratch_folder+'/input', exist_ok=True)
 os.makedirs(scratch_folder+'/output', exist_ok=True)
 
 #Initial date
-LM_YYYY_INI='1993'
+LM_YYYY_INI='2004'
 LM_MM_INI='11'
 LM_DD_INI='01'
 LM_ZZ_INI='00'
 
 #end of chained dates
-LM_YYYY_END_CHAIN='1993'
-LM_MM_END_CHAIN='11'
-LM_DD_END_CHAIN='03'
+LM_YYYY_END_CHAIN='2004'
+LM_MM_END_CHAIN='12'
+LM_DD_END_CHAIN='01'
 LM_ZZ_END_CHAIN='00'
 
 
@@ -57,8 +57,8 @@ d_ini=datetime.datetime(int(LM_YYYY_INI),int(LM_MM_INI),int(LM_DD_INI),int(LM_ZZ
 d_end_chain=datetime.datetime(int(LM_YYYY_END_CHAIN),int(LM_MM_END_CHAIN),int(LM_DD_END_CHAIN),int(LM_ZZ_END_CHAIN))
 
 
-months_per_step=2
-days_per_step=1 #If >0, this will overwrite months_per_step
+months_per_step=1
+days_per_step=0 #If >0, this will overwrite months_per_step
 last_step=0
 
 def diff_month(d1, d2):

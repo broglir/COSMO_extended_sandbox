@@ -33,9 +33,9 @@ bd_data_prev=/project/pr94/ERAinterim/${LM_YYYY_PREV}/ERAINT_${LM_YYYY_PREV}_${L
 #echo $bd_data_next
 #echo $bd_data_prev
 #External Parameters
-extpar_dir=/project/pr94/extpar-HPC
-extpar_file_lm_c=extpar_12km_europe_771x771.nc
-extpar_file_lm_f=extpar_2km_europe_2313x2313.nc
+extpar_dir=/project/pr94/lhentge/extpar/atlantic/atlantic
+extpar_file_lm_c=extpar_atlantic_12km.nc
+extpar_file_lm_f=extpar_atlantic_2km.nc
 
 cat > job <<EOF_job
 #!/bin/bash -l
