@@ -493,8 +493,8 @@ ${RUNCMD} -u -n ${NTASKS} ${EXE}
 
 
 if [[  \$? -eq 0 ]]; then
-    echo "compressing minute output"
-    python ../compress_minute_output.py
+    echo "simulation success"
+   # python ../compress_minute_output.py
 else
     echo "simulation failed"
 fi

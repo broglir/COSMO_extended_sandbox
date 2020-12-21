@@ -127,6 +127,7 @@ for i in range(len(dataframe)):
 #            a=os.system("sed -i 's/ dt=%s/ dt=%1.1f/g' %s/run"%(dt,dataframe['dt'][i],main_simulation_step))
             if postprocessing:
                 print('Syncronizing files to %s'%saving_folder)
+                os.system('module unload xalt')
 #                os.system('cd postprocessing && ./run')
 #                os.system('rsync -aq output/ %s'%saving_folder)
     

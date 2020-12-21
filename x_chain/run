@@ -22,6 +22,10 @@ cat > job <<EOF_job
 #SBATCH --account=${ACCOUNT}
 module unload xalt
 
+### !!!! specific to user robro !!!!
+conda activate py3-cscs
+#### !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 cd ..
 python control_simulation.py
 exit_status=\$?

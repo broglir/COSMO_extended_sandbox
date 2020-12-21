@@ -356,7 +356,7 @@ cat > INPUT_ORG <<EOF_ORG
   nboundlines=3,
   ldump_ascii = .FALSE.,
   luse_rttov = .FALSE.,
-  idbg_level = 10,
+  idbg_level = 1000,
   ldebug_dyn = .TRUE.,
   ldebug_rad = .FALSE.,
   ldebug_tur = .FALSE.,
@@ -503,8 +503,8 @@ date
 ${RUNCMD} -u -n ${NTASKS} ${EXE}
 
 if [[  \$? -eq 0 ]]; then
-    echo "compressing minute output"
-    python ../compress_minute_output.py 
+    echo "simulation success"
+    #python ../compress_minute_output.py 
 else
     echo "simulation failed"
 fi

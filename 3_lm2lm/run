@@ -211,9 +211,9 @@ ${RUNCMD} -u -n ${NTASKS} ${EXE}
 date
 
 # do postprocessing
-cd ./output/
-../../bin/grc
-cd -
+#cd ./output/
+#../../bin/grc
+#cd -
 
 # remove job tag (if present)
 \rm -f .jobid >&/dev/null
