@@ -66,8 +66,8 @@ cat > INPUT <<EOF
    yinput_model='CM',
    hstart=${LM_NL_HSTART},
    hstop=${LM_NL_HSTOP},
-   ydate_ini='${LM_YYYY_INI}${LM_MM_INI}${LM_DD_INI}${LM_ZZ_INI}',
-   hincbound=6.0,
+   ydate_ini='${LM_YYYY_INI}${LM_MM_INI}${LM_DD_INI}${LM_ZZ_INI}0000',
+   hincbound=3.0,
    linitial=.TRUE.,
    lboundaries=.TRUE.,
    ltime_mean=.TRUE.,
@@ -106,13 +106,13 @@ cat > INPUT <<EOF
  / 
  &GRID_IN
   pcontrol_fi = 30000.,
-  ie_in_tot = 512, je_in_tot = 256, ke_in_tot = 60,
-  startlat_in_tot = -89.46282, startlon_in_tot = -180,
-  endlon_in_tot=179.296875, endlat_in_tot=89.46282,
+  ie_in_tot = 349, je_in_tot = 228, ke_in_tot = 108,
+  startlat_in_tot = -31.896944, startlon_in_tot = -70.875,
+  endlon_in_tot=27.0, endlat_in_tot=31.896944,
   pollat_in = 90.0, pollon_in = 180.0,
-  dlat_in = 0.703125, dlon_in = 0.703125,
+  dlat_in = 0.28125, dlon_in = 0.28125,
   ke_soil_in = 3,
-  czml_soil_in=0.015, 0.10, 0.405, 1.205,
+  czml_soil_in=0.035, 0.175, 0.640, 1.945,
  /
  &LMGRID
   ielm_tot=551, jelm_tot=361, kelm_tot=60,
@@ -146,7 +146,7 @@ cat > INPUT <<EOF
   ie_ext=800, je_ext=500,
   ylmext_lfn='./input/extpar_atlantic_12km.nc',
   ylmext_cat='./',
-  yinext_lfn='cas${LM_YYYY_INI}${LM_MM_INI}${LM_DD_INI}${LM_ZZ_INI}.nc',
+  yinext_lfn='cas${LM_YYYY_INI}${LM_MM_INI}${LM_DD_INI}${LM_ZZ_INI}0000.nc',
   yinext_cat='./input/',
   yin_cat='./input/',
   ylm_cat= './output/',
@@ -168,7 +168,7 @@ EOF
 #SBATCH --output=job.out
 #SBATCH --ntasks=${NTASKS}
 #SBATCH --partition=${QUEUE}
-#SBATCH --time=00:30:00
+#SBATCH --time=01:30:00
 #SBATCH --account=${ACCOUNT}
 EOF_job_SLURM
 #We currently only have an allocation on GPU nodes

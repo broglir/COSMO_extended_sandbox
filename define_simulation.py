@@ -17,7 +17,7 @@ import calendar
 # =============================================================================
 # Define chain for simulation
 # =============================================================================
-name_run='testing_sandbox'
+name_run='cosmo_cs_winter2020'
 
 postprocessing=True
 store_system='/project/pr94/robro/cosmo_out'
@@ -37,13 +37,13 @@ os.makedirs(scratch_folder+'/input', exist_ok=True)
 os.makedirs(scratch_folder+'/output', exist_ok=True)
 
 #Initial date
-LM_YYYY_INI='2004'
+LM_YYYY_INI='2019'
 LM_MM_INI='11'
 LM_DD_INI='01'
 LM_ZZ_INI='00'
 
 #end of chained dates
-LM_YYYY_END_CHAIN='2004'
+LM_YYYY_END_CHAIN='2019'
 LM_MM_END_CHAIN='12'
 LM_DD_END_CHAIN='01'
 LM_ZZ_END_CHAIN='00'

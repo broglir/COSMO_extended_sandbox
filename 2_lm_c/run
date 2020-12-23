@@ -152,7 +152,7 @@ cat > INPUT_IO <<EOF_IO
   lbdana=.FALSE.,
   ydirini='./input/',
   lchkini=.TRUE.,
-  hincbound=6.0,
+  hincbound=3.0,
   ydirbd='./bc/',
   lchkbd =.TRUE.,
   lana_qi = .FALSE.,
@@ -433,7 +433,7 @@ cat > INPUT_PHY <<EOF_PHY
       ke_soil=9,
       czml_soil=0.005, 0.025, 0.07, 0.16, 0.34, 0.70, 1.47, 2.86, 5.74,  11.50,
       czbot_w_so=8.0,
-      lsoil_init_fill=.FALSE.,  !!!!!!!!!!!!!! Saturate low soil levels; Use only in first month of simualt
+      lsoil_init_fill=.TRUE.,  !!!!!!!!!!!!!! Saturate low soil levels; Use only in first month of simualt
     lconv=.FALSE.,  !.TRUE.,
       itype_conv=3, !0,
       nincconv=5,
@@ -490,7 +490,6 @@ setenv CUDA_VA_RESERVATION_CHUNK_SIZE 4294967296
 
 
 
-
 #unlimit
 #limit
 # cleanup
@@ -522,12 +521,12 @@ date
 
 # done
 #hook
-pwd
-cd ..
+#pwd
+#cd ..
 #python control_simulation.py
 #./run_daint.sh
-sacct -j \$SLURM_JOB_ID --format=User,JobID,Jobname,partition,state,time,start,end,elapsed,MaxRss,MaxVMSize,nnodes,ncpus,nodelist,AveC
-PUFreq
+#sacct -j \$SLURM_JOB_ID --format=User,JobID,Jobname,partition,state,time,start,end,elapsed,MaxRss,MaxVMSize,nnodes,ncpus,nodelist,AveC
+#PUFreq
 EOF_job
 
 # clean away old *.out files
