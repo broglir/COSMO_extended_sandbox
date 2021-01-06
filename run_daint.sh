@@ -21,7 +21,7 @@ while getopts "o" opt
      esac
 done
 # global setup
-NAME_RUN="testing_sandbox"
+NAME_RUN="cosmo_cs_winter2020"
 
 export SCHEDULER="SLURM"
 export QUEUE="normal"
@@ -54,12 +54,12 @@ export NPIO_LMF=6
 export EXE_LMF="./lm_f90"
 
 # Configure Simulation
-export LM_YYYY_INI=2004
+export LM_YYYY_INI=2019
 export LM_MM_INI=11
 export LM_DD_INI=01
 export LM_ZZ_INI=00
 
-export LM_YYYY_BEGIN=2004
+export LM_YYYY_BEGIN=2019
 export LM_MM_BEGIN=11
 export LM_DD_INI=01
 export LM_ZZ_BEGIN=${LM_ZZ_INI}

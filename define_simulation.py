@@ -98,8 +98,8 @@ def get_idbg(step=main_simulation_step):
     return num
 
 def multiply_idbg(n=10,step=main_simulation_step):
-    number=get_idbg(step=step)
-    new_number=number*n
+    #number=get_idbg(step=step)
+    new_number=10 #avoid setting idbg larger than 10; can lead to crash
     a=os.system("sed -i 's/  idbg_level = %i/  idbg_level = %i/g' %s/run"%(number,new_number,step))
 
 
