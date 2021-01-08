@@ -510,10 +510,10 @@ date
 #cd -
 
 ## remove job tag (if present)
-#\rm -f .jobid >&/dev/null
-cd ..
-sacct -j \$SLURM_JOB_ID --format=User,JobID,Jobname,partition,state,time,start,end,elapsed,MaxRss,MaxVMSize,nnodes,ncpus,nodelist,AveC
-PUFreq
+\rm -f .jobid >&/dev/null
+#cd ..
+#sacct -j \$SLURM_JOB_ID --format=User,JobID,Jobname,partition,state,time,start,end,elapsed,MaxRss,MaxVMSize,nnodes,ncpus,nodelist,AveC
+#PUFreq
 # done
 EOF_job
 
