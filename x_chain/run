@@ -16,7 +16,7 @@ cat > job <<EOF_job
 #
 #SBATCH --job-name=x_chain
 #SBATCH --output=job.out
-#SBATCH --time=00:05:00
+#SBATCH --time=00:15:00
 #SBATCH --nodes=1
 #SBATCH --partition=normal
 #SBATCH --account=${ACCOUNT}
@@ -34,6 +34,10 @@ if [ "\${exit_status}" -eq 0 ];
 then
     echo "Ready to run "
     ./run_daint.sh
+	jobidc=`sbatch compress.bash ./output/lm_c | sed 's/Submitted batch job //g'`
+	jobidf=`sbatch compress.bash ./output/lm_f | sed 's/Submitted batch job //g'`
+	sbatch --dependency=afterany:${jobidc} movehook.bash ./output/lm_c lm_c
+	sbatch --dependency=afterany:${jobidf} movehook.bash ./output/lm_f lm_f
 else
     echo "errors in control_simulation. Aborting step"
 fi

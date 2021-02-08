@@ -61,15 +61,15 @@ tar -xzvf $bd_data_next -C output --transform 's/caf/cas/'
 
 #ssh ela 'sleep 20 &&ls>test_ls &'
 
-pwd
-cd ..
+#pwd
+#cd ..
 #if [-f do]
 #then
 #    ./run_daint.sh
 #    rm do
 #fi
-sacct -j \$SLURM_JOB_ID --format=User,JobID,Jobname,partition,state,time,start,end,elapsed,MaxRss,MaxVMSize,nnodes,ncpus,nodelist,AveC
-PUFreq
+#sacct -j \$SLURM_JOB_ID --format=User,JobID,Jobname,partition,state,time,start,end,elapsed,MaxRss,MaxVMSize,nnodes,ncpus,nodelist,AveC
+#PUFreq
 #./run_daint.sh
 EOF_job
 

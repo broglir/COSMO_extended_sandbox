@@ -444,6 +444,7 @@ cat > INPUT_PHY <<EOF_PHY
     lseaice=.false.,
     itype_aerosol = 2,
     itype_albedo = 2,
+	ico2_rad = 19,
  /END
 EOF_PHY
 
@@ -526,8 +527,8 @@ pwd
 cd ..
 #python control_simulation.py
 #./run_daint.sh
-sacct -j \$SLURM_JOB_ID --format=User,JobID,Jobname,partition,state,time,start,end,elapsed,MaxRss,MaxVMSize,nnodes,ncpus,nodelist,AveC
-PUFreq
+#sacct -j \$SLURM_JOB_ID --format=User,JobID,Jobname,partition,state,time,start,end,elapsed,MaxRss,MaxVMSize,nnodes,ncpus,nodelist,AveC
+#PUFreq
 EOF_job
 
 # clean away old *.out files
