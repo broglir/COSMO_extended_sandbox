@@ -17,10 +17,10 @@ import calendar
 # =============================================================================
 # Define chain for simulation
 # =============================================================================
-name_run='cosmo_cs_winter2020'
+name_run='PGW_atl_04'
 
-postprocessing=True
-store_system='/project/pr94/robro/cosmo_out'
+postprocessing=False #leave on false!!
+store_system='/project/pr94/robro/cosmo_out' #not used!
 saving_folder=store_system+'/'+name_run+'/'
 scratch_folder= os.environ['SCRATCH']+'/'+name_run
 
@@ -37,14 +37,14 @@ os.makedirs(scratch_folder+'/input', exist_ok=True)
 os.makedirs(scratch_folder+'/output', exist_ok=True)
 
 #Initial date
-LM_YYYY_INI='2019'
+LM_YYYY_INI='2092'
 LM_MM_INI='11'
 LM_DD_INI='01'
 LM_ZZ_INI='00'
 
 #end of chained dates
-LM_YYYY_END_CHAIN='2019'
-LM_MM_END_CHAIN='12'
+LM_YYYY_END_CHAIN='2093'
+LM_MM_END_CHAIN='03'
 LM_DD_END_CHAIN='01'
 LM_ZZ_END_CHAIN='00'
 
@@ -78,7 +78,7 @@ if days_per_step:
     steps=days_in_between/days_per_step
     if days_in_between%days_per_step:
         last_step=days_in_between%days_per_step
-    
+
 def get_dt(step=main_simulation_step):
     with open(step+'/run') as f: lines = f.read().splitlines()
     num=np.nan
@@ -98,7 +98,7 @@ def get_idbg(step=main_simulation_step):
     return num
 
 def multiply_idbg(n=10,step=main_simulation_step):
-    #number=get_idbg(step=step)
+    number=get_idbg(step=step)
     new_number=10 #avoid setting idbg larger than 10; can lead to crash
     a=os.system("sed -i 's/  idbg_level = %i/  idbg_level = %i/g' %s/run"%(number,new_number,step))
 
@@ -128,7 +128,7 @@ if __name__=='__main__':
     if not os.path.isfile(name_control_dataframe):
         print('Creating dataframe')
         dataframe=pd.DataFrame(columns=columns)
-        
+
         d_end=d_ini
         for i in range(int(steps)):
             d_str=d_end
@@ -142,7 +142,7 @@ if __name__=='__main__':
                 else:d_end=d_end+ relativedelta(months=months_per_step)
             else:
                 d_end=d_end+ relativedelta(days=days_per_step)
-            print(d_end)    
+            print(d_end)
             h_str=(d_str-d_ini).days*24
             h_end=(d_end-d_ini).days*24
             status=0
@@ -156,8 +156,8 @@ if __name__=='__main__':
             status=0
             run_setup = pd.DataFrame([[int(steps),d_str.isoformat()[:10],d_end.isoformat()[:10],h_str,h_end,status,dt,idbg,time()]], columns=columns)
             dataframe=dataframe.append(run_setup)
-            
-            
+
+
         dataframe.to_csv(name_control_dataframe,mode = 'w',sep="\t", index=False)
     else:
         print("Dataframe was already created")

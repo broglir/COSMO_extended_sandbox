@@ -16,6 +16,7 @@ import sys
 from define_simulation import d_ini, d_end_chain,name_control_dataframe, saving_folder,postprocessing, get_dt,main_simulation_step, time, get_idbg,multiply_idbg
 pd.options.mode.chained_assignment = None
 
+
 def edit_and_submit_run(d_ini,d_str,h_str,h_end):
     #Init dates
     a=os.system("sed -i 's/.*LM_YYYY_INI.*/export LM_YYYY_INI=%i/' run_daint.sh"%d_ini.year)
@@ -79,12 +80,12 @@ def check_errors(status):
         f.close()
         if 'ERROR' in lines or 'error' in lines:
             new_status=-1
-    if os.path.isfile('3_lm2lm/job.out'):
-        f = open('3_lm2lm/job.out','r')
-        lines = (' ').join(f.readlines()[10:])
-        f.close()
-        if 'ERROR' in lines or 'error' in lines:
-            new_status=-1
+#    if os.path.isfile('3_lm2lm/job.out'):
+#        f = open('3_lm2lm/job.out','r')
+#        lines = (' ').join(f.readlines()[10:])
+#        f.close()
+#        if 'ERROR' in lines or 'error' in lines:
+#            new_status=-1
     if os.path.isfile('4_lm_f/job.out'):
         f = open('4_lm_f/job.out','r')
         lines = (' ').join(f.readlines()[10:])

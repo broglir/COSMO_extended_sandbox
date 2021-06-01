@@ -140,7 +140,7 @@ cat > INPUT_IO <<EOF_IO
   nincwait=10,
   nmaxwait=200,
   nhour_restart=$LM_NL_HSTOP,$LM_NL_HSTOP,1
-  ngribout=10,
+  ngribout=9,
   itype_gather=2,
   ydir_restart_in='./output/restarts'
   ydir_restart_out='./output/restarts'
@@ -260,23 +260,7 @@ cat > INPUT_IO <<EOF_IO
  &GRIBOUT
   yform_write='ncdf',
   hcomb=$LM_NL_HSTART,$LM_NL_HSTOP,6,
-!  yvarml='U', 'V', 'W',
-  yvarml=' ',
-  yvarpl='T','FI','RELHUM','U','V','W',
-  plev = 200,500,700,850,
-  yvarzl=' ',
-  lcheck=.TRUE.,
-  luvmasspoint=.FALSE.,
-  lwrite_const=.FALSE.,
-  ydir='./output/6h',
-  l_z_filter=.FALSE.,l_p_filter=.FALSE.,
-  l_fi_pmsl_smooth =.FALSE.,
-  ytunit='d',
- /END
- &GRIBOUT
-  yform_write='ncdf',
-  hcomb=$LM_NL_HSTART,$LM_NL_HSTOP,6,
-  yvarml='QV','QC','QI','T','P',
+  yvarml='T',
   yvarpl=' ',
   yvarzl=' ',
   lcheck=.TRUE.,
@@ -290,7 +274,7 @@ cat > INPUT_IO <<EOF_IO
  &GRIBOUT
   yform_write='ncdf',
   hcomb=$LM_NL_HSTART,$LM_NL_HSTOP,6,
-  yvarml='QR','QS','CLC','U','V','W',
+  yvarml='CLC','U','V','W',
   yvarpl=' ',
   yvarzl=' ',
   lcheck=.TRUE.,
@@ -339,7 +323,7 @@ cat > INPUT_ORG <<EOF_ORG
   lphys   =.TRUE.,
   ldiagnos=.FALSE.,
   luse_rttov=.false.,
-  ldfi=.FALSE.,  
+  ldfi=.FALSE.,
   nprocx=${NPX}, nprocy=${NPY}, nprocio=0,
   num_asynio_comm=${NPIO},
   num_iope_percomm=1,
@@ -348,7 +332,7 @@ cat > INPUT_ORG <<EOF_ORG
   itype_calendar = 0,
   idbg_level=4,
   l_t_check = .FALSE.,
-  nproma=-1, 
+  nproma=-1,
  /END
  &TUNING
    tkhmin = 0.4,
@@ -430,7 +414,8 @@ cat > INPUT_PHY <<EOF_PHY
     lsso=.FALSE.,
       ltkesso=.False.,
     itype_albedo = 2,
-    itype_aerosol = 2
+    itype_aerosol = 2,
+    ico2_rad = 20,
   /END
 EOF_PHY
 
@@ -477,8 +462,8 @@ setenv MPICH_G2G_PIPELINE 256
 setenv CRAY_CUDA_PROXY 0
 setenv CUDA_VA_RESERVATION_CHUNK_SIZE 4294967296
 
-
-module load cudatoolkit
+module load cdt/20.08
+#module load cudatoolkit
 
 #unlimit
 #limit

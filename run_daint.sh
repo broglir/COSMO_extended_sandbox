@@ -3,6 +3,8 @@
 
 #module use /apps/common/UES/sandbox/kraushm/easybuild/dom-CLE7.19.09/modules/all
 module load daint-gpu
+module load cdt/20.08
+#module load cdt-cuda
 
 #module load COSMO_pompa/31d7227-CrayCCE-19.08-cuda-10.0-crclim-double
 #module unload cudatoolkit
@@ -21,7 +23,7 @@ while getopts "o" opt
      esac
 done
 # global setup
-NAME_RUN="testing_sandbox"
+NAME_RUN="PGW_atl_04"
 
 export SCHEDULER="SLURM"
 export QUEUE="normal"
@@ -54,18 +56,18 @@ export NPIO_LMF=6
 export EXE_LMF="./lm_f90"
 
 # Configure Simulation
-export LM_YYYY_INI=2004
+export LM_YYYY_INI=2092
 export LM_MM_INI=11
 export LM_DD_INI=01
 export LM_ZZ_INI=00
 
-export LM_YYYY_BEGIN=2004
-export LM_MM_BEGIN=11
+export LM_YYYY_BEGIN=2093
+export LM_MM_BEGIN=02
 export LM_DD_INI=01
 export LM_ZZ_BEGIN=${LM_ZZ_INI}
 
-export LM_NL_HSTART=0
-export LM_NL_HSTOP=720
+export LM_NL_HSTART=2208
+export LM_NL_HSTOP=2880
 
 export FRONTS_TS_START=2006060100
 export FRONTS_TS_END=2006060200
@@ -75,7 +77,12 @@ jobid=""
 lmfid=""
 pwd
 
-parts="0_get_data 1_ifs2lm 2_lm_c 3_lm2lm 4_lm_f x_chain"
+#parts="0_get_data 1_ifs2lm 2_lm_c 3_lm2lm 4_lm_f x_chain"
+#parts="2_lm_c"
+#parts="4_lm_f x_chain"
+#parts="3_lm2lm 4_lm_f x_chain"
+parts="2_lm_c 3_lm2lm 4_lm_f x_chain"
+#parts="1_ifs2lm"
 
 for part in ${parts} ; do
   short=`echo "${part}" | sed 's/^[0-9]*_//g'`

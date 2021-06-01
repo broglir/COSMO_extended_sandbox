@@ -14,8 +14,18 @@ LM_MM_NEXT=$(echo $next_date |colrm 8| tail -c 3)
 #echo $LM_MM_NEXT
 bd_data_next=/project/pr94/ERAinterim/${LM_YYYY_NEXT}/ERAINT_${LM_YYYY_NEXT}_${LM_MM_NEXT}.tar.gz
 
+#Roman Brogli added more months for PGW
+next_date=$(date -d "${LM_YYYY_NEXT}-${LM_MM_NEXT}-01 1 month" +%Y-%m-%d )
+LM_YYYY_NEXT2=$(echo $next_date |colrm 5)
+LM_MM_NEXT2=$(echo $next_date |colrm 8| tail -c 3)
 
+bd_data_next2=/project/pr94/ERAinterim/${LM_YYYY_NEXT2}/ERAINT_${LM_YYYY_NEXT2}_${LM_MM_NEXT2}.tar.gz
 
+next_date=$(date -d "${LM_YYYY_NEXT2}-${LM_MM_NEXT2}-01 1 month" +%Y-%m-%d )
+LM_YYYY_NEXT3=$(echo $next_date |colrm 5)
+LM_MM_NEXT3=$(echo $next_date |colrm 8| tail -c 3)
+
+bd_data_next3=/project/pr94/ERAinterim/${LM_YYYY_NEXT3}/ERAINT_${LM_YYYY_NEXT3}_${LM_MM_NEXT3}.tar.gz
 
 
 prev_date=$(date -d "${LM_YYYY_BEGIN}-${LM_MM_BEGIN}-01 -1 month" +%Y-%m-%d )
@@ -42,7 +52,7 @@ cat > job <<EOF_job
 #
 #SBATCH --job-name=get_data
 #SBATCH --output=job.out
-#SBATCH --time=01:00:00
+#SBATCH --time=03:00:00
 #SBATCH --ntasks=1
 #SBATCH --partition=xfer
 #module unload xalt
@@ -51,13 +61,15 @@ cat > job <<EOF_job
 if [ ! -d ../input/ifs2lm ] ; then mkdir -p ../input/ifs2lm ; fi
 
 #Copy External Parameters
-if [ ! -f ../1_ifs2lm/$extpar_file_lm_c ] ; then /bin/cp $extpar_dir/$extpar_file_lm_c ../1_ifs2lm/input ; fi
-if [ ! -f ../3_lm2lm/$extpar_file_lm_f  ] ; then /bin/cp $extpar_dir/$extpar_file_lm_f ../3_lm2lm/input  ; fi
+if [ ! -f ../1_ifs2lm/input/$extpar_file_lm_c ] ; then /bin/cp $extpar_dir/$extpar_file_lm_c ../1_ifs2lm/input ; fi
+if [ ! -f ../3_lm2lm/input/$extpar_file_lm_f  ] ; then /bin/cp $extpar_dir/$extpar_file_lm_f ../3_lm2lm/input  ; fi
 
 
 tar -xzvf $bd_data -C output --transform 's/caf/cas/'
 tar -xzvf $bd_data_prev -C output --transform 's/caf/cas/'
 tar -xzvf $bd_data_next -C output --transform 's/caf/cas/'
+tar -xzvf $bd_data_next2 -C output --transform 's/caf/cas/'
+tar -xzvf $bd_data_next3 -C output --transform 's/caf/cas/'
 
 #ssh ela 'sleep 20 &&ls>test_ls &'
 

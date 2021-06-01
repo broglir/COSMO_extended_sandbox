@@ -18,4 +18,5 @@ done
 
 # clean data
 \rm -rf input output
+\rm Dataframe*
 

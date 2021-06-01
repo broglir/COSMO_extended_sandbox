@@ -30,14 +30,15 @@ cd ..
 python control_simulation.py
 exit_status=\$?
 echo 'exit_status:' \$exit_status
-if [ "\${exit_status}" -eq 0 ];
+if [ "\${exit_status}" -eq 0 ]
 then
     echo "Ready to run "
     ./run_daint.sh
-	jobidc=`sbatch compress.bash ./output/lm_c | sed 's/Submitted batch job //g'`
-	jobidf=`sbatch compress.bash ./output/lm_f | sed 's/Submitted batch job //g'`
-	sbatch --dependency=afterany:${jobidc} movehook.bash ./output/lm_c lm_c
-	sbatch --dependency=afterany:${jobidf} movehook.bash ./output/lm_f lm_f
+	jobidc=\$(sbatch compress.bash ./output/lm_c)
+	jobidf=\$(sbatch compress.bash ./output/lm_f)
+	unset SLURM_MEM_PER_CPU
+	sbatch --dependency=afterany:\${jobidc##* } movehook.bash ./output/lm_c lm_c
+	sbatch --dependency=afterany:\${jobidf##* } movehook.bash ./output/lm_f lm_f
 else
     echo "errors in control_simulation. Aborting step"
 fi

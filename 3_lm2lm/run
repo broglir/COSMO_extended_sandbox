@@ -191,6 +191,8 @@ cat >> job <<EOF_job
 set verbose
 set echo
 
+#module load cdt/20.08
+
 # set environmental parameters
 setenv OMP_NUM_THREADS 1
 setenv MALLOC_MMAP_MAX_ 0
